@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Inventario - StockPro</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://unpkg.com/lucide@0.460.0"></script>
+</head>
+<body>
+
+  <div class="container">
+
+    <header class="main-header">
+      <div class="header-content">
+        <h1>
+          <i data-lucide="package-search"></i>
+          StockPro <span>Control de Inventario</span>
+        </h1>
+        <div class="badge-status">
+          <i data-lucide="database"></i> Conectado a MariaDB
+        </div>
+      </div>
+    </header>
+
+    <section class="kpi-grid">
+      <div class="card kpi-card">
+        <div class="kpi-icon blue"><i data-lucide="boxes"></i></div>
+        <div class="kpi-data">
+          <h3>Total Productos</h3>
+          <p id="total-products-kpi">0</p>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon green"><i data-lucide="dollar-sign"></i></div>
+        <div class="kpi-data">
+          <h3>Valor Inventario</h3>
+          <p id="total-value-kpi">$0.00</p>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon yellow"><i data-lucide="layers"></i></div>
+        <div class="kpi-data">
+          <h3>Stock Total</h3>
+          <p id="total-stock-kpi">0 unids.</p>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon red"><i data-lucide="alert-triangle"></i></div>
+        <div class="kpi-data">
+          <h3>Sin / Bajo Stock</h3>
+          <p id="alert-stock-kpi">0</p>
+        </div>
+      </div>
+    </section>
+
+    <main class="main-grid">
+
+      <section class="card form-section">
+        <div class="card-header">
+          <h2 id="form-title"><i data-lucide="plus-circle"></i> Agregar Producto</h2>
+          <span class="subtitle">Complete los campos del producto</span>
+        </div>
+
+        <form id="product-form">
+          <input type="hidden" id="product-id">
+
+          <div class="form-group">
+            <label for="product-name">Nombre del Producto *</label>
+            <input type="text" id="product-name" placeholder="Ej. Laptop HP Pavilion 15" maxlength="100" required>
+          </div>
+
+          <div class="form-group">
+            <label for="product-category">Categoría *</label>
+            <select id="product-category" required></select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="product-price">Precio ($) *</label>
+              <input type="number" id="product-price" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="product-stock">Stock (Unidades) *</label>
+              <input type="number" id="product-stock" min="0" step="1" placeholder="0" required>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="btn-submit" class="btn btn-primary">
+              <i data-lucide="plus"></i> <span id="btn-text">Agregar Producto</span>
+            </button>
+            <button type="button" id="btn-cancel" class="btn btn-secondary hidden">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="inventory-section">
+
+        <div class="card filter-card">
+          <div class="filter-header">
+            <h3><i data-lucide="filter"></i> Buscador y Filtros</h3>
+            <button type="button" id="btn-reset-filters" class="btn-link">
+              <i data-lucide="rotate-ccw"></i> Limpiar Filtros
+            </button>
+          </div>
+
+          <div class="filter-grid">
+            <div class="filter-group col-span-2">
+              <label for="filter-search">Buscar Nombre / Categoría</label>
+              <div class="input-icon">
+                <i data-lucide="search"></i>
+                <input type="text" id="filter-search" placeholder="Buscar por palabra clave...">
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-category">Categoría</label>
+              <select id="filter-category">
+                <option value="">Todas las categorías</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-stock-status">Estado del Stock</label>
+              <select id="filter-stock-status">
+                <option value="Todos">Todos los productos</option>
+                <option value="En stock">En Stock (&gt; 5)</option>
+                <option value="Bajo stock">Bajo Stock (1 - 5)</option>
+                <option value="Sin stock">Agotado (0)</option>
+              </select>
+            </div>
+
+            <div class="filter-group col-span-2">
+              <div class="price-label-row">
+                <label for="filter-max-price">Precio Máximo:</label>
+                <span id="max-price-display" class="price-val">$0</span>
+              </div>
+              <input type="range" id="filter-max-price" min="0" max="500000" step="1000" value="500000">
+            </div>
+          </div>
+        </div>
+
+        <div class="products-header">
+          <p id="results-count">Mostrando 0 productos</p>
+          <div class="view-toggle">
+            <button type="button" id="view-table-btn" class="active" title="Vista de Tabla">
+              <i data-lucide="list"></i>
+            </button>
+            <button type="button" id="view-grid-btn" title="Vista de Tarjetas">
+              <i data-lucide="layout-grid"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="table-container" class="card table-wrapper">
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="product-table-body"></tbody>
+          </table>
+        </div>
+
+        <div id="grid-container" class="product-cards-grid hidden"></div>
+
+        <div id="empty-state" class="card empty-state hidden">
+          <i data-lucide="package-x"></i>
+          <h3>No se encontraron productos</h3>
+          <p>Intenta ajustar los filtros de búsqueda o agrega un nuevo producto.</p>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
