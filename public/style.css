@@ -223,8 +223,7 @@
       grid-template-columns: 1fr;
     }
   }
-  
-  /* FORMULARIO */
+
   .card-header {
     margin-bottom: 16px;
   }
@@ -286,7 +285,7 @@
     width: 100%;
   }
   
-  /* FILTROS */
+ 
   .filter-card {
     margin-bottom: 20px;
   }
@@ -341,7 +340,7 @@
     color: var(--primary);
   }
   
-  /* SECCIÓN PRODUCTOS & TABLA */
+ 
   .products-header {
     display: flex;
     justify-content: space-between;
@@ -378,7 +377,7 @@
     box-shadow: var(--shadow-sm);
   }
   
-  /* TABLA */
+
   .table-wrapper {
     overflow-x: auto;
     padding: 0;
@@ -491,8 +490,7 @@
   }
   
   .stock-btn:hover { background: #f1f5f9; }
-  
-  /* ESTADO VACÍO */
+
   .empty-state {
     text-align: center;
     padding: 48px 20px;
